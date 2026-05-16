@@ -81,15 +81,16 @@ if i have users, i can store their passwords.
 ```
 
 **Spring Security Architecture (Behind the SCENES)**
+**The Authentication Filter**
+
 
 ![lesson_three.png](lesson_three.png)
 
 ![image_four.png](image_four.png)
 
 ```
-
 Spring Security especially in WebApps is a sequence of filters.
-
+Http Request get through to the application after a number of filters.
 When a HTTP request comes, before it goes to the controller, we start with the  {Authentication Filter} first of all
 
 (a)Authentication Filter---> Authentication Manager
@@ -109,7 +110,14 @@ will know where to get user credentials...
 including the DataBase or even a web service
 
 (g)After a successful authentication, the User Object is stored in the context.
-
+  Authentication is stored in the security context.
+  
+ public String demo(){
+        var u = SecurityContextHolder.getContext().getAuthentication();
+        u.getAuthorities().forEach(System.out::println);
+        return "Demo";
+ }
+ 
 ```
 
 **Adding User Details to context**
@@ -189,6 +197,25 @@ I may also want to badge my users, eg Admin, and all the actions they can do.
 
 ```
 
+**Project three**
+
+![spring_security-architecture.png](spring_security-architecture.png)
+
+![custom_authentication_architecture.png](custom_authentication_architecture.png)
+
+
+**Task (Implementing our own custom Authentication**
+
+```
+The above is a custom authentication architecuture that uses my custom key to authenticate.
+
+.ie.Not UserName and Password.
+
+Rather than the username and password, we can also be able to implement our custom authentication.
+(Convention ones include: Http Basic, OpenId connect, OAUTH2.O, cerificate authentication syle.
+
+
+```
 **Tips**
 ```
 1.SpringBoot---->Convention over configuration apporoach
