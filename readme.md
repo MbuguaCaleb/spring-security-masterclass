@@ -214,6 +214,36 @@ The above is a custom authentication architecuture that uses my custom key to au
 Rather than the username and password, we can also be able to implement our custom authentication.
 (Convention ones include: Http Basic, OpenId connect, OAUTH2.O, cerificate authentication syle.
 
+```
+**SecurityFilterChain Bean**
+
+```
+
+
+When writing my custom spring security configuration, i must overrie this bean
+
+  @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http){
+       return http
+               .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+               .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
+               .build();
+
+    }
+    
+//if i override the securuty filter chain Bean, then i mist write my default security configuration
+    //One this is realise tis the filter that spring boot configures for us by default.(UsernamePasswordAuthenticationFilter)
+    //if i want to configure my authentication i use the security filter chain bean.
+    //By default the Security filter chain uses the UserName and Password authentication filter.
+    //I am overriding the default implementation of the security filter chain
+    //i am adding a new filter at the position where the UserNamePasswordFilter would have stayed
+    //i am adding a custom authentication filter at the position of the other filter.
+```
+
+**Authorization Filter**
+
+```
+Takes in the authentication from the security context and applies the rules.
 
 ```
 **Tips**
@@ -234,6 +264,22 @@ security filter---->endpoint
 
 
 ```
+
+**Thread Local Concept**
+
+![thread_local_concept.png](thread_local_concept.png)
+
+**Security context is per thread, per request**
+
+```
+Every request made in our application runs on its own thread, managed by JVM Called ThreadLocal.
+
+Every request will only see the data that is associated to it.
+
+Security context is different from a session.
+
+```
+
 
 **Eager Fetching vs Lazy Fetching**
 

@@ -15,6 +15,11 @@ public class SecurityConfig {
 
     private final CustomAuthenticationFilter customAuthenticationFilter;
 
+    //if i override the security filter chain Bean, then i mist write my default security configuration
+    //One this is realise tis the filter that spring boot configures for us by default.(UsernamePasswordAuthenticationFilter)-->)Authentication Manager
+    //the UserName and password is the one that calls the manager.
+    //if i want to configure my authentication i use the security filter chain bean.
+    //By default the Security filter chain uses the UserName and Password authentication filter.
     //I am overriding the default implementation of the security filter chain
     //i am adding a new filter at the position where the UserNamePasswordFilter would have stayed
     //i am adding a custom authentication filter at the position of the other filter.
@@ -22,6 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
        return http
                .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+               .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
                .build();
 
     }
