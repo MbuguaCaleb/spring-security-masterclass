@@ -246,6 +246,47 @@ When writing my custom spring security configuration, i must overrie this bean
 Takes in the authentication from the security context and applies the rules.
 
 ```
+
+
+**Project Four(Multiple Authentication)**
+
+```
+(Old spring security design where you could have had Just one authentication manager,
+and multiple providers)
+
+(this can still work but only with two default filters)
+![multiple_filter_one.png](multiple_filter_one.png)
+
+When implementing multiple authentication, i need two different authentication filters.
+
+```
+
+**Custom Filter + Default Filter Architecture**
+
+![custom_plus_default_filter_architecture.png](custom_plus_default_filter_architecture.png)
+
+
+
+**Http Security Object**
+
+```
+HttpSecurity Object is the one that defines the entire security configs
+for Our Application.    
+When our applications are starting, they normally use this configuration
+
+The below creates an entire Http Basic configuration.
+(a)When HttpBasic is called, it creates a configurer.
+(b)When the application starts, it creates the Filter, Auth manager, provider, etc..
+(c)Anything we add here helps configure something in the entire architecture of Spring Security.
+   
+
+When i have multiple authentications and therefore multiple filters, what spring security needs me to do
+is to return an authentication,
+
+Either of my Filters should return an Authentication Object.
+
+
+```
 **Tips**
 ```
 1.SpringBoot---->Convention over configuration apporoach
@@ -262,6 +303,8 @@ when using a web app
 
 security filter---->endpoint
 
+4.Wow spring boot provides a default username and password authentication filter,that
+we configure with a UserDetail service.
 
 ```
 
@@ -299,6 +342,7 @@ With FetchType.LAZY, related data is loaded only when accessed.
 
 @OneToMany(fetch = FetchType.LAZY)
 private List<OrderItem> items;
+
 ```
 **Notes By**
 
