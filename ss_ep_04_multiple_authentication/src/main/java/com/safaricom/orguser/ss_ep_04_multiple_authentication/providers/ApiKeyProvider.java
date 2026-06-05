@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 
+//in My Provider it is where i do the implementation and then return the authentication to the Manager
 @AllArgsConstructor
 public class ApiKeyProvider implements AuthenticationProvider {
 

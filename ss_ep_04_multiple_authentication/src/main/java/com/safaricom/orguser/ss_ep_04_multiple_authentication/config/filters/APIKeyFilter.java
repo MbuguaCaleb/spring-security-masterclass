@@ -36,6 +36,7 @@ public class APIKeyFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
 
             }
+
             //My Manager needs to take in an Instance of My Unauthenticated Authentication, then Authenticate
             //To update the authentication to a final value, authenticated or Not
             CustomAuthenticationManager manager = new CustomAuthenticationManager(key);
