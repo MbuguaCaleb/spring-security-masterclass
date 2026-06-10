@@ -9,6 +9,7 @@
         <option value="$PROJECT_DIR$/ss_ep_02_managing_users/pom.xml" />
         <option value="$PROJECT_DIR$/ss_ep_03_custom_authentication/pom.xml" />
         <option value="$PROJECT_DIR$/ss_ep_04_multiple_authentication/pom.xml" />
+        <option value="$PROJECT_DIR$/ss_ep_05_authorization_part_one/pom.xml" />
       </list>
     </option>
   </component>

@@ -34,7 +34,6 @@ public class APIKeyFilter extends OncePerRequestFilter {
 
             if("null".equals(requestKey) || requestKey == null){
                 filterChain.doFilter(request, response);
-
             }
 
             //My Manager needs to take in an Instance of My Unauthenticated Authentication, then Authenticate

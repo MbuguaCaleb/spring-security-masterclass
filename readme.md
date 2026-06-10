@@ -287,6 +287,72 @@ Either of my Filters should return an Authentication Object.
 
 
 ```
+
+**Lesson 5**
+
+![authorization_part_one.png](authorization_part_one.png)
+
+
+**Authorization**
+```
+Key Concept----->Every Form of Authentication has a filter.
+
+Inside the AuthX Filter,(we have the manager, provider, user details service etc
+
+At the end if the authentication is successful, we normally have an Authentication Object
+stored in the security context.(it is a standard security Object)
+
+The authentication object has got everything about the user who authenticated,
+i.e Roles & Permissions as well.
+
+The Authorization filter now uses this information to give or deny  access to our 
+application resources.
+
+Authorization is always after authentication because it depends 
+on the Authentication Object.
+
+Authorization can be implemented in 2 different ways in spring security.
+
+(a)Endpoint Level.
+
+(Only for WebApps) 
+(Applied in Filter Chain before the controller)
+
+(b)Method Level.
+
+You can apply it on any bean method.
+The method is aspected via spring security rules.
+
+401-->Authentication fails
+403-->Forbidden, Authorization fails.
+
+   //endpoint level authorization
+        /*used for web applications
+         (a).anyRequest().authenticated(), for this one all the resources will be accessed as long as the user is authenticated.
+            matcher method + authorization rule
+            
+           
+          //1.Which matcher method i should use and how? (anyRequest(), mvcMatchers(),antMatchers(), regexMatchers()
+            2.How to apply different authorization rules.
+
+          The only way you will get rejected is if you did not authenticate at all.
+
+         (b)authorize.anyRequest().permitAll() // rule 2 (permits all, but when you decide to add a password that is wrong, it will not authenticate
+           when you try to use a wrong password, the authentication filter will fail, wow.
+           wrong auth will still reject,
+           authorization is always after authorization
+
+          (c)authorize.anyRequest().hasAuthority("read")
+            Only when you have the authority read, you can access any endpoint.
+
+          (d)  authorize.anyRequest().hasAnyAuthority("read","write") enumerates authorities
+
+        Roles relate to a group of actions or permissions
+
+          (e) configurations with the Spring Expression Language.
+           authorize.anyRequest().access(new WebExpressionAuthorizationManager("isAuthenticated() and hasAuthority('read')") ))//SPEL----->authorization rules )
+
+```
 **Tips**
 ```
 1.SpringBoot---->Convention over configuration apporoach
