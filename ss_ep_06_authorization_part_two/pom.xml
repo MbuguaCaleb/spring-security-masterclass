@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.safaricom.orguser</groupId>
-    <artifactId>ss_ep_05_authorization_part_two</artifactId>
+    <artifactId>ss_ep_06_authorization_part_two</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ss_ep_05_authorization_part_two</name>
     <description>ss_ep_05_authorization_part_two</description>

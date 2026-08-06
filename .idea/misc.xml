@@ -11,6 +11,9 @@
         <option value="$PROJECT_DIR$/ss_ep_04_multiple_authentication/pom.xml" />
         <option value="$PROJECT_DIR$/ss_ep_05_authorization_part_one/pom.xml" />
         <option value="$PROJECT_DIR$/ss_ep_05_authorization_part_two/pom.xml" />
+        <option value="$PROJECT_DIR$/ss_ep_06_authorization_part_two/pom.xml" />
+        <option value="$PROJECT_DIR$/ss_ep_07_method_authorizatin_part_one/pom.xml" />
+        <option value="$PROJECT_DIR$/ss_ep_08_method_authorization_part_two/pom.xml" />
       </list>
     </option>
   </component>

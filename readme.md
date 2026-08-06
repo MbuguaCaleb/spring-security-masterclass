@@ -1,4 +1,5 @@
 **Spring Security Intro**
+
 ```
 It is about application level security
 
@@ -38,11 +39,11 @@ Spring security provides varoius authentcation mechanisims
 
 ```
 
-| Authentication | Authorization Rules     |
-|----------------|-------------------------|
+| Authentication | Authorization Rules      |
+|----------------|--------------------------|
 | Http Basic     | WEB Apps  (Http Filters) | 
-| Certificate    | Non Web Apps (Aspects)  | 
-| JWT/Oauth2.0   |                         | 
+| Certificate    | Non Web Apps (Aspects)   | 
+| JWT/Oauth2.0   |                          | 
 
 ![lesson_one.png](lesson_one.png)
 
@@ -55,20 +56,25 @@ With the randomly generated credentials.
 They are secured by Http Basic Authentication.
 
 ```
-**Encoding, Encryption and Hash Functions**
 
+**Encoding, Encryption and Hash Functions**
 
 | Encoding                                                                                 | Encryption                                                                              | Hash functions                                                                                                                             |
 |------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | It is function that is always pssible to <br/>revert somehow.                            | You are transforming an input into an output<br/>                                       | From and input you can get the output.<br> but from the output you cannever by any means find the input.                                   |
 | it may be a mathematical computation that does not <br/> need even a secret to decode it | But to go back to the input you always need a secret.                                   | 2nd rule of a hash function is <br/> if you have an input for a hash function you can be able to test if it corresponds to the output<br/> |
 | example 345 --> reversing it to 541 is an encoding<br/>                                  | Not everyone is able to find waht was the input after an<br/> encryption functioin<br/> | wow, this is how padsswords work, I.e you can do an equality check, but you can never revert back.                                         |
- | In an encoding, you can always revert the output to find the input if you know the rule  | It is still a trandfomation but it implies you need a secret to go back to the input.   | if one stoled hashed password, they cannever find the input.                                                                               |
- | In an Ecoding you do not even need to have a secret.                                     | Without a secret you cannot go back.                                                    |                                                                                                                                            |
- | Can be always reversed                                                                   | A secret is also known as a key and it can be symetric or assymeric,                   |                                                                                                                                            |
-      
-  ![lesson_two.png](lesson_two.png)
+| In an encoding, you can always revert the output to find the input if you know the rule  | It is still a trandfomation but it implies you need a secret to go back to the input.   | if one stoled hashed password, they cannever find the input.                                                                               |
+| In an Ecoding you do not even need to have a secret.                                     | Without a secret you cannot go back.                                                    |                                                                                                                                            |
+| Can be always reversed                                                                   | A secret is also known as a key and it can be symetric or assymeric,                    |                                                                                                                                            |
 
+```
+Symmetric encryption uses a single shared key for both encrypting and decrypting data, making it fast and highly efficient for bulk data. 
+Asymmetric encryption uses a key pair—a public key to encrypt and a private key to decrypt—which solves the key-distribution problem but is much slower
+
+```
+
+![lesson_two.png](lesson_two.png)
 
 **Creating UserDetails Service**
 
@@ -82,7 +88,6 @@ if i have users, i can store their passwords.
 
 **Spring Security Architecture (Behind the SCENES)**
 **The Authentication Filter**
-
 
 ![lesson_three.png](lesson_three.png)
 
@@ -203,7 +208,6 @@ I may also want to badge my users, eg Admin, and all the actions they can do.
 
 ![custom_authentication_architecture.png](custom_authentication_architecture.png)
 
-
 **Task (Implementing our own custom Authentication**
 
 ```
@@ -215,6 +219,7 @@ Rather than the username and password, we can also be able to implement our cust
 (Convention ones include: Http Basic, OpenId connect, OAUTH2.O, cerificate authentication syle.
 
 ```
+
 **SecurityFilterChain Bean**
 
 ```
@@ -247,8 +252,7 @@ Takes in the authentication from the security context and applies the rules.
 
 ```
 
-
-**Project Four(Multiple Authentication)**
+**Project Four (Multiple Authentication)**
 
 ```
 (Old spring security design where you could have had Just one authentication manager,
@@ -264,8 +268,6 @@ When implementing multiple authentication, i need two different authentication f
 **Custom Filter + Default Filter Architecture**
 
 ![custom_plus_default_filter_architecture.png](custom_plus_default_filter_architecture.png)
-
-
 
 **Http Security Object**
 
@@ -292,8 +294,8 @@ Either of my Filters should return an Authentication Object.
 
 ![authorization_part_one.png](authorization_part_one.png)
 
-
 **Authorization**
+
 ```
 Key Concept----->Every Form of Authentication has a filter.
 
@@ -353,7 +355,9 @@ The method is aspected via spring security rules.
            authorize.anyRequest().access(new WebExpressionAuthorizationManager("isAuthenticated() and hasAuthority('read')") ))//SPEL----->authorization rules )
 
 ```
+
 **Tips**
+
 ```
 1.SpringBoot---->Convention over configuration apporoach
 Spring Boot based on dependencies we add configures our applications somehow.
@@ -389,15 +393,134 @@ Security context is different from a session.
 
 ```
 
+*Lesson seven**
+
+```
+We can apply authorization rules, at method level of any bean.
+
+**Method Based Authorization**
+
+```
+
+Applicable for any type of application. WEB and Non Web Based.
+
+Two ways of Applying Authorization Roles:
+
+1.Filter Level 2.Method Level
+
+```
+
+**Design**
+
+```
+
+Authentication Filter Security context (Has a User with Authoritles and Roles AUHTORIZATION Filter. Controller.
+Service--->Repository Access to the controller is based on passing the authorization rules
+
+One way to apply security is on the filter chain.
+
+The other way is on Method Level of any Bean as long as it is managed by Spring.
+
+The authorization rules on method level will still continue using the secuerity context
+
+so an authentication filter still becomes necessary Authentication is an important first step to authorization
+
+```
+
+**Annotations**
+
+```
+
+To have method security work,since it is an aspect we need to have GlobalMethodSecurity as Enabled @Configuration
+@EnableMethodSecurity (prePostEnabled =true)
+//@PreAuthorize, @PostAuthorize, @PreFilter @PostFilter
+
+prePostEnabled =true, enables the four annotations.
+
+Once i enable the aspects in the configuration, i can use the annotations on top of my methods.
+
+@GetMapping ("/demo1")
+@PreAuthorize ("hasAuthority ('read')")
+public String demo () { return "Demo"; }
+
+@GetMapping ("/demo3")
+@PreAuthorize ("hasAnyAuthority ('write', 'read')")
+public String demo3 () { return "Demo"; }
+
+Wow, endpoint authorozation has abig advantage of being cleaner when you have many endpoints
+
+```
+![method_level_Authorization.png](../method_level_Authorization.png)
+
+
+**What happens if we have both Authorizations**
+
+```
+
+Remember that the filter chain is always before the controller. The Filter will always apply first.
+
+The request always goes to the filter first, then the controller method.
+
+```
+**Wow, Something Unique**
+
+```
+
+//todo (Notes)
+//Using preAuthorize we are able to gain access of our PathVariables //authentication object from security context.
+//after auth is successful an authentication object is stored in the security context. //this means we can apply
+different authorization rules based on the data in the request @GetMapping ("/demo3/{smth}")
+@PreAuthorize ("#something == authentication")
+public String demo3 (@PathVariable ("smth") String something) { var a = SecurityContextHolder.getContext ()
+.getAuthentication ();
+
+        return "Demo";
+    }
+
+```
+  ```
+*
+    * (a)PreAuthorize--->the annotation we use hundred percent of time. Before resource access
+    *
+    * (b)PostAuthorize is called so because the rules will be applied after the Method is called
+    *    //Mainly used when we want to restrict the access to some returned value
+    *
+    *  //restricts the access to the return value if the condition is not executed correctly
+    *     //Mainly used when we want to restrict the access to some returned value
+    *     //Demo 5 will only be retuned if return is not Demo 5
+    *
+    *
+    * (c)PreFilter
+    *     //Whenever we use preFilter, we must have as a Parameter an Array
+    *      if we have more than one filter in the List, we use the Filter Target to Specify
+    *      the List which PreFilter should act on
+    *
+    *      It filters Based on a condition the values that are sent to the Method
+    *
+    * (d)PostFilter
+    * //@PostFilter
+    *     //the Post Filter will filter the return value based on the auhtorization condition
+    *    //the return type must be either a collection or an array.
+    *
+    *    the returned collection must be mutable,
+    *
+    *            return List.of("abcd", "wert", "qajkhk", "rhsbs"); (Wont Work)
+    *            new ArrayList<String> () -->Works
+*/
+
+````
+
+
 
 **Eager Fetching vs Lazy Fetching**
 
 ```
+
 1. EAGER Fetching
 
 With FetchType.EAGER, related data is loaded immediately together with the parent entity.
 
-@ManyToOne(fetch = FetchType.EAGER)
+@ManyToOne (fetch = FetchType.EAGER)
 private Customer customer;
 
 When you fetch an Order, the Customer is also fetched automatically.
@@ -406,13 +529,14 @@ When you fetch an Order, the Customer is also fetched automatically.
 
 With FetchType.LAZY, related data is loaded only when accessed.
 
-@OneToMany(fetch = FetchType.LAZY)
+@OneToMany (fetch = FetchType.LAZY)
 private List<OrderItem> items;
 
 ```
 **Notes By**
 
 ```
+
 Mbugua Caleb
 
 ```
