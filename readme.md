@@ -508,10 +508,247 @@ public String demo3 (@PathVariable ("smth") String something) { var a = Security
     *            new ArrayList<String> () -->Works
 */
 
-````
 
 
 
+**OAUTH2.0 Notes**
+![oauth2.0_architecture_diagram.png](oauth2.0_architecture_diagram.png)
+
+**Sample Authorization Server LogIn Page**
+
+![sample_authorization_server_page.png](sample_authorization_server_page.png)
+
+```
+Summary-->Get Token, use token for the resource servers)
+
+wow, it is always good to know things step by step not to have holes in learning
+(My Principle)
+
+(a) User and Client
+
+(b)Authorization Server
+
+{Handles the authentication for the mulitiple backends or resource servers}
+
+(c)Resource Server.
+
+{These are the backends or the resources in the OAUTH2.0 Architecture.
+
+N/B
+wow, you can have the Authorization and the resource server in one application.
+However it is good if they are apart.
+
+
+I do not want my users artificially managed, i take them in a different authorization server.
+  (i am cenralizing all my Users)
+  (i take them into the Authorization Server)
+  
+User Must not exist, GrantType is different
+
+A client calls the auhthorization server to make sure it is authenitcated, through a grant type
+Once the client gets token, the token acts as an access card.It will allow the client to open resources in the
+resource server.
+
+Token will have the priviledges according to the authentucated user.
+.ie they must not access all the resources based on their priviledge
+
+The resource server will identify who is makeing the request, in terms of the Role.
+then apply the authorization rules.
+
+Authorization server makes the authenitication, then provides enough details
+thought the token, so that the Resource Server can apply the authoruzaton rules.
+
+
+```
+
+![oauth2.0_image_two.png](oauth2.0_image_two.png)
+
+```
+
+Token will have the priviledges according to the authentucated user.
+.ie they must not access all the resources based on their priviledge
+
+The resource server will identify who is makeing the request, in terms of the Role.
+then apply the authorization rules.
+
+Authorization server makes the authenitication, then provides enough details
+thought the token, so that the Resource Server can apply the authoruzaton rules.
+
+```
+
+**Three Steps of OATH2.0**
+
+```
+1.How does the client  get a token from the Authorization Server?
+
+There are several ways in which a token can be obtained
+These several ways are called grant types
+
+Important Grant Types
+
+1.authorization_code -->Used when yiu have a user (PCKE)
+2.Client credentials (WHEN You dont have a User)
+3.Refresh token --> if you do not want the user re-authenticated if the access
+  token is not valid anymore.
+
+Depracated GrantTypes (Do not Use)
+Implicit, password grant type
+
+2.How does my resource server know that the token is valid and 
+appply the authorzation rules?
+
+```
+
+*(a)Authorization code grant type*
+
+![authorization_code_grant_type_full_low.png](authorization_code_grant_type_full_low.png)
+```
+The first thing the client does, is redirecting the User to a login page in the
+authorization server. eg, SAFARICOM_DI, GOOGLE, MICROSOFT
+
+The User will put their credentials in the login page of the authorization server
+
+The login is not something designed by the client but something in the authorization 
+server side.
+
+If it was deisgnened by the client we would have been on the authoirzation grant type
+that is depracated and not in use any more.
+
+The User Logs in the Authorization Server
+
+Once the User Logs in successfully, the authorization server redirects them back to a page
+in the client.
+
+How does the authorization server know to what page they redirect the user?
+
+(a)The Authorization server must have the URL Regaistred
+(b)the client also sends that URL as it directs the user to the log in page of the authorization server
+  (that URI is called the redirect URI, it is provided by the client and needs to be known previously
+   by the authorization Server)
+   
+  as it re-directs we have a key called the authorization code
+  it is a kind of a code or a secret that the authorization server shares with the client
+  
+  Hence the name of the grant type as authorization code
+  This is the first thing a client gets after successful authenitcation of the user.
+  
+ (c) With the authentication_code and after identifying itself via the client credentials, 
+ it makes a post request  to the authrzation server and get the token back.
+ 
+ (Two things (code + client_creds = token back)
+ 
+ The client credentials are not the user crdentials. Theyare the client_id, client_secret
+ They identify the applicaation and are not [username and password = auth code]
+ Wow, the Authorization server manages both the user and client credentials.
+ 
+```
+
+**Integrating PCKE to the Authcode grant type**
+![auth_code_with_PCKE_Fr_enahanced_Security.png](auth_code_with_PCKE_Fr_enahanced_Security.png)
+
+
+**What is PCKE?**
+
+```
+he client credentials are not that safe, remember the client is public
+The client needs to store them somewhhere, yet its public.
+for non public clients, we can use auhtoirization_code without PCKE
+recommedned is we should use PCKE
+Using PCKE We use something else to identify the client instead of the client crednetials
+
+How is PCKE Achieved?
+When the redirect to the login page happens, getting the auth_code.
+The client generates two pieces of info: challenge and veirifier
+
+challenge===>random
+verifier=====>hash(random)
+
+The hash is applied to this call.
+Remember a hash function has no reverse.But can be verified ny mathces
+
+instead of the client sending it crdentials it will sesnd the
+random value, which only itself knows, and was hashed in the first handshake and sent to the authorization server
+
+(Two handshakes)
+When a user logs in, they are redirected to the log in page of the authorization server,
+with a hash of the random value (to be used in place of client creds)
+
+when they get an auth code, the send it with the random value, and the authotrization server
+through pattern mathcing will validate
+
+```
+
+**Client Credentials Grant Type (When we do not have a User)**
+
+![Client_Credentials.png](Client_Credentials.png)
+
+```
+It is just a simple two step process, (Client ID + Client Secret)--->TOKEN
+
+It is called so when we have a service,that needs to authenticate but No User
+
+How can we implement a case when we dont have a user?
+
+we Use Client credentials.
+
+We need to be caefull not to allow all the endpoints when using the client credentials.
+Very specific endpoints should be accessed via client credentials grant type.
+
+```
+
+**Refresh Token**
+![refresh_token.png](refresh_token.png)
+
+```
+A refesh token is a value we get in the response, after a user authenticates.
+
+Allows us regenerate a token, without a user having to authenticate,
+within the same session
+
+Without a referesh token, the user will have to authenticate again
+we can minimise the token lifespan,and refresh it as long as the user is active
+
+The refresh token is sent to the authorization server, and clients the client
+a new access and new refesh token...
+
+```
+
+**Token Validation By the Resource Server**
+
+```
+
+Tokens.(Understanding Tokens)
+
+JWT are not the only tokens that exist out there.
+
+(a)opaque-->Tokens that dont contain any data.
+
+(b)non-opaque-->Tokens that contain information inside, example JWT.
+
+(Key About Tokens)
+A token can be anything....
+The token should help the resource server apply the authrozation rules.
+
+For Opaque Tokens, the authorization server will always implment an introspection endpoint
+
+The introspection endpoint is an endpoint that gets a token then returns 
+information/details about the token.
+
+The intorospection endpoint is used by the  resource server, to be able to 
+get info on authorization rules.
+
+The resource server will always introspect the token and get the needed values.
+
+NON OPAQUE TOKEN (Example JWT)
+contains info inside
+resource server does not call the auth server
+
+The token is signed.
+the resource server is configured with a key that can validate 
+the  signture, and get the info from the token, thus no need for intro spection
+it gets all the info from the token itself
+
+```
 **Eager Fetching vs Lazy Fetching**
 
 ```
